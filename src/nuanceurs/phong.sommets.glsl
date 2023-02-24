@@ -60,6 +60,9 @@ layout(location=8) in vec4 TexCoord;
 
 out Attribs {
     vec4 couleur;
+    vec3 lumiDir[3];
+    vec3 normale[3]; 
+    vec3 obsVec[3];
 } AttribsOut;
 
 void main( void )
@@ -67,8 +70,30 @@ void main( void )
     // appliquer la transformation standard du sommet (P * V * M * sommet)
     gl_Position = matrProj * matrVisu * matrModel * Vertex;
 
-    // calcul de la composante ambiante du modèle
-    vec4 coul = vec4(0);
+    // calculer la position du sommet dans le repère de la caméra
+    vec3 pos = ( matrVisu * matrModel * Vertex ).xyz;
 
-    AttribsOut.couleur = clamp( coul, 0.0, 1.0 );
+    // calcul de la composante ambiante du modèle
+    vec4 coul = vec4(0.0,0.0,0.0,1.0);
+
+    for (int j = 0; j < 3; j++){
+
+        // calculer la normale (N)
+        AttribsOut.normale[j] = matrNormale * Normal;
+        vec3 N = normalize(matrNormale * Normal);
+
+        // calculer le vecteur de la direction (L) de la lumière (dans le repère de la caméra)
+        AttribsOut.lumiDir[j] = ( matrVisu * LightSource.position[j] ).xyz - pos;
+        vec3 lumiDir = ( matrVisu * LightSource.position[j] ).xyz - pos;
+
+        // calculer le vecteur observateur (O)
+        // =(0-pos) un vecteur qui pointe vers le (0,0,0), c'est-à-dire vers la caméra
+        AttribsOut.obsVec[j] = (-pos);
+        vec3 obsVec = (-pos);
+
+        vec3 L = normalize( lumiDir ); // vecteur vers la source lumineuse
+        vec3 O = normalize( obsVec );  // position de l'observateur
+
+        coul += FrontMaterial.ambient * LightSource.ambient[j];
+    }
 }

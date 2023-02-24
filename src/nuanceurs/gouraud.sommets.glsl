@@ -96,6 +96,8 @@ void main( void )
     // appliquer la transformation standard du sommet (P * V * M * sommet)
     gl_Position = matrProj * matrVisu * matrModel * Vertex;
 
+
+
     // calculer la normale (N) qui sera interpolée pour le nuanceur de fragments
     vec3 N = normalize(matrNormale * Normal);
 
@@ -106,7 +108,7 @@ void main( void )
     vec4 coul = FrontMaterial.emission + FrontMaterial.ambient * LightModel.ambient;
 
     // calculer le vecteur de la direction (O) vers l'observateur (dans le repère de la caméra)
-                    // on considère que l'observateur (la caméra) est à l'infini dans la direction (0,0,1)
+    // on considère que l'observateur (la caméra) est à l'infini dans la direction (0,0,1)
     vec3 obsVec = (-pos); //vec3( 0.0, 0.0, 1.0 );//(-pos);   // =(0-pos) un vecteur qui pointe vers le (0,0,0), c'est-à-dire vers la caméra
     vec3 O = normalize( obsVec );  // position de l'observateur
 
@@ -116,9 +118,10 @@ void main( void )
         // calculer le vecteur de la direction (L) de la lumière (dans le repère de la caméra)
         //AttribsOut.lumiDir = ( matrVisu * LightSource.position ).xyz - pos;
         // dans cet exemple, on décide plutôt que la direction (L) de la lumière est déjà dans le repère de la caméra
-        vec3 lumiDir = ( LightSource.position[j] ).xyz - pos;
-
-
+        vec3 lumiDir = ( matrVisu * LightSource.position[j] ).xyz - pos;
+        
+        
+        vec3 O = normalize( obsVec );
         vec3 L = normalize( lumiDir ); // vecteur vers la source lumineuse
 
         coul += calculerReflexion( j, L, N, O );
