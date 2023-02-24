@@ -448,7 +448,15 @@ void FenetreTP::initialiser()
     };
 
     // partie 1: définir les normales
-    // GLfloat normales[3*4*6] = { ... };  // (0,+1,0), ... (0,0,-1), ... (+1,0,0), etc.
+    GLfloat normales[3*4*6] = 
+    {
+        0.0, 1.0, 0.0,  0.0, 1.0, 0.0,  0.0, 1.0, 0.0,  0.0, 1.0, 0.0,
+        0.0, 0.0, -1.0,  0.0, 0.0, -1.0,  0.0, 0.0, -1.0  ,0.0, 0.0, -1.0,
+        1.0, 0.0, 0.0,  1.0, 0.0, 0.0,  1.0, 0.0, 0.0,  1.0, 0.0, 0.0,
+        0.0, 0.0, 1.0,  0.0, 0.0, 1.0,  0.0, 0.0, 1.0  ,0.0, 0.0, 1.0,
+        -1.0, 0.0, 0.0,  -1.0, 0.0, 0.0,  -1.0, 0.0, 0.0,  -1.0, 0.0, 0.0,
+        0.0, -1.0, 0.0,  0.0, -1.0, 0.0,  0.0, -1.0, 0.0,  0.0, -1.0, 0.0,
+    };  // (0,+1,0), ... (0,0,-1), ... (+1,0,0), etc.
 
     // partie 2: définir les coordonnées de texture
     // const GLfloat             // les différentes parties du monde  (voir figure 15)
@@ -474,7 +482,12 @@ void FenetreTP::initialiser()
     glVertexAttribPointer( locVertex, 3, GL_FLOAT, GL_FALSE, 0, 0 );
     glEnableVertexAttribArray(locVertex);
     // partie 1: charger le VBO pour les normales
-    // ...
+    glBindBuffer( GL_ARRAY_BUFFER, vbo[1] );
+    glBufferData(GL_ARRAY_BUFFER, sizeof(normales), normales, GL_STATIC_DRAW);
+    glVertexAttribPointer(locNormal, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(locNormal);
+    // 
+    // 
     // partie 2: charger les deux VBO pour les coordonnées de texture: celle pour la Terre sur le cube et pour les autres textures
     // ...
 
@@ -573,6 +586,12 @@ void afficherModele()
                 // afficher le cube
                 glUniformMatrix4fv( locmatrModel, 1, GL_FALSE, matrModel );
                 // (partie 1: ne pas oublier de calculer et donner une matrice pour les transformations des normales)
+                glm::mat3 matrVM = glm::mat3(matrVisu.getMatr() * matrModel.getMatr());
+                glm::mat3 matrNormale = glm::inverse(matrVM);
+                glUniformMatrix3fv(locmatrNormale, 1, GL_TRUE, // on transpose
+                glm::value_ptr(matrNormale));
+
+
 
                 glBindVertexArray( vao[0] );
                 glDrawArrays( GL_TRIANGLE_STRIP,  0, 4 );

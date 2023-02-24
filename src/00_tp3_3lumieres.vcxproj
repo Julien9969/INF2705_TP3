@@ -28,26 +28,26 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -167,12 +167,14 @@
     <ClInclude Include="inf2705-texture.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="nuanceurFragments.glsl" />
-    <None Include="nuanceurSommets.glsl" />
-    <None Include="nuanceurTessCtrl.glsl" />
-    <None Include="nuanceurTessEval.glsl" />
-  </ItemGroup>
-  <ItemGroup>
+    <None Include="nuanceurs\gouraud.fragments.glsl" />
+    <None Include="nuanceurs\gouraud.sommets.glsl" />
+    <None Include="nuanceurs\phong.fragments.glsl" />
+    <None Include="nuanceurs\phong.sommets.glsl" />
+    <None Include="nuanceurs\tess.ctrl.glsl" />
+    <None Include="nuanceurs\tess.eval.glsl" />
+    <None Include="nuanceurs\tess.fragments.glsl" />
+    <None Include="nuanceurs\tess.sommets.glsl" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

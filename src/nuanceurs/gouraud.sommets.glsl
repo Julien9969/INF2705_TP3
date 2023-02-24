@@ -96,12 +96,32 @@ void main( void )
     // appliquer la transformation standard du sommet (P * V * M * sommet)
     gl_Position = matrProj * matrVisu * matrModel * Vertex;
 
+    // calculer la normale (N) qui sera interpolée pour le nuanceur de fragments
+    vec3 N = normalize(matrNormale * Normal);
+
+    // calculer la position (P) du sommet (dans le repère de la caméra)
+    vec3 pos = vec3( matrVisu * matrModel * Vertex );
+
     // calcul de la composante ambiante du modèle
     vec4 coul = FrontMaterial.emission + FrontMaterial.ambient * LightModel.ambient;
 
-    // couleur du sommet
-    int j = 0;
-    // ... = calculerReflexion( j, L, N, O );
+    // calculer le vecteur de la direction (O) vers l'observateur (dans le repère de la caméra)
+                    // on considère que l'observateur (la caméra) est à l'infini dans la direction (0,0,1)
+    vec3 obsVec = (-pos); //vec3( 0.0, 0.0, 1.0 );//(-pos);   // =(0-pos) un vecteur qui pointe vers le (0,0,0), c'est-à-dire vers la caméra
+    vec3 O = normalize( obsVec );  // position de l'observateur
 
+    // couleur du sommet
+    for (int j = 0; j < 3; j++){
+
+        // calculer le vecteur de la direction (L) de la lumière (dans le repère de la caméra)
+        //AttribsOut.lumiDir = ( matrVisu * LightSource.position ).xyz - pos;
+        // dans cet exemple, on décide plutôt que la direction (L) de la lumière est déjà dans le repère de la caméra
+        vec3 lumiDir = ( LightSource.position[j] ).xyz - pos;
+
+
+        vec3 L = normalize( lumiDir ); // vecteur vers la source lumineuse
+
+        coul += calculerReflexion( j, L, N, O );
+    }
     AttribsOut.couleur = clamp( coul, 0.0, 1.0 );
 }
