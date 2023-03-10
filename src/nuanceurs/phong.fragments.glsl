@@ -119,6 +119,7 @@ void main( void )
    }
 
     coul = clamp( coul, 0.0, 1.0 );
+    // coul = vec4(1);
 
     vec4 coulTex = texture( laTextureCoul, AttribsIn.texCoord );
     if ( iTexCoul > 0 ) {

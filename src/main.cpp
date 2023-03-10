@@ -470,11 +470,11 @@ void FenetreTP::initialiser()
      GLfloat texcoordsTerre[2*4*6] = 
      {
          MOx1, MOy1,  MOx2,MOy1,  MOx1, MOy2,  MOx2, MOy2,
-         ASx1, ASy1,  ASx2, ASy1, ASx1, ASx2,  ASx2, ASy2,
-         AMx1, AMy1,  AMx2, AMy1, AMx1, AMx2,  AMx2, AMy2,
-         QCx1, QCy1,  QCx2, QCy1, QCx1, QCx2,  QCx2, QCy2,
-         EUx1, EUy1,  EUx2, EUy1, EUx1, EUx2,  EUx2, EUy2,
-         AUx1, AUy1,  AUx2, AUy1, AUx1, AUx2,  AUx2, AUy2,     
+         ASx1, ASy1,  ASx2, ASy1, ASx1, ASy2,  ASx2, ASy2,
+         AMx1, AMy1,  AMx2, AMy1, AMx1, AMy2,  AMx2, AMy2,
+         QCx1, QCy1,  QCx2, QCy1, QCx1, QCy2,  QCx2, QCy2,
+         EUx1, EUy1,  EUx2, EUy1, EUx1, EUy2,  EUx2, EUy2,
+         AUx1, AUy1,  AUx2, AUy1, AUx1, AUy2,  AUx2, AUy2,     
      };  // les coordonnées de texture pour la Terre (voir figure 15)
      
      GLfloat texcoordsAutre[2*4*6] = { 
@@ -507,12 +507,10 @@ void FenetreTP::initialiser()
     // partie 2: charger les deux VBO pour les coordonnées de texture: celle pour la Terre sur le cube et pour les autres textures
     glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
     glBufferData(GL_ARRAY_BUFFER, sizeof(texcoordsTerre), texcoordsTerre, GL_STATIC_DRAW);
-    glVertexAttribPointer(locTexCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
-    glEnableVertexAttribArray(locTexCoord);
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo[3]);
     glBufferData(GL_ARRAY_BUFFER, sizeof(texcoordsAutre), texcoordsAutre, GL_STATIC_DRAW);
-    glVertexAttribPointer(locTexCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
     glEnableVertexAttribArray(locTexCoord);
 
     glBindVertexArray(0);
@@ -586,6 +584,18 @@ void afficherModele()
         glBindTexture( GL_TEXTURE_2D, texturesNorm[varsUnif.iTexNorm-1] );
     else
         glBindTexture( GL_TEXTURE_2D, 0 );
+
+    glBindVertexArray(vao[0]);
+
+    if (varsUnif.iTexCoul == 1) {
+        glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
+        glVertexAttribPointer(locTexCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    }
+    else
+    {
+        glBindBuffer(GL_ARRAY_BUFFER, vbo[3]);
+        glVertexAttribPointer(locTexCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    }
 
     // Dessiner le modèle
     matrModel.PushMatrix(); {
