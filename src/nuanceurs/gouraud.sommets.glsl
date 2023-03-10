@@ -60,6 +60,7 @@ layout(location=8) in vec4 TexCoord;
 
 out Attribs {
     vec4 couleur;
+    vec2 texCoord;
 } AttribsOut;
 
 
@@ -125,6 +126,7 @@ void main( void )
         vec3 L = normalize( lumiDir ); // vecteur vers la source lumineuse
 
         coul += calculerReflexion( j, L, N, O );
+        AttribsOut.texCoord = TexCoord.st + vec2(-1,0) * tempsGlissement;
     }
     AttribsOut.couleur = clamp( coul, 0.0, 1.0 );
 }

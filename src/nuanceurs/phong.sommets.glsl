@@ -63,6 +63,7 @@ out Attribs {
     vec3 lumiDir[3];
     vec3 normale[3]; 
     vec3 obsVec[3];
+    vec2 texCoord;
 } AttribsOut;
 
 void main( void )
@@ -80,20 +81,15 @@ void main( void )
 
         // calculer la normale (N)
         AttribsOut.normale[j] = matrNormale * Normal;
-        vec3 N = normalize(matrNormale * Normal);
 
         // calculer le vecteur de la direction (L) de la lumière (dans le repère de la caméra)
         AttribsOut.lumiDir[j] = ( matrVisu * LightSource.position[j] ).xyz - pos;
-        vec3 lumiDir = ( matrVisu * LightSource.position[j] ).xyz - pos;
 
         // calculer le vecteur observateur (O)
         // =(0-pos) un vecteur qui pointe vers le (0,0,0), c'est-à-dire vers la caméra
         AttribsOut.obsVec[j] = (-pos);
-        vec3 obsVec = (-pos);
 
-        vec3 L = normalize( lumiDir ); // vecteur vers la source lumineuse
-        vec3 O = normalize( obsVec );  // position de l'observateur
 
-        coul += FrontMaterial.ambient * LightSource.ambient[j];
+        AttribsOut.texCoord = TexCoord.st + vec2(-1,0) * tempsGlissement;
     }
 }

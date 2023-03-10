@@ -57,6 +57,7 @@ in Attribs {
     vec3 lumiDir[3];
     vec3 normale[3]; 
     vec3 obsVec[3];
+    vec2 texCoord;
 } AttribsIn;
 
 out vec4 FragColor;
@@ -92,7 +93,7 @@ vec4 calculerReflexion( in int j, in vec3 L, in vec3 N, in vec3 O ) // pour la l
 void main( void )
 {
     vec4 coul = AttribsIn.couleur;  // la composante ambiante déjà calculée (dans nuanceur de sommets)
-   vec3 N = vec3(0);
+    vec3 N = vec3(0);
 
 
    //Phong
@@ -117,7 +118,18 @@ void main( void )
         }
    }
 
-    FragColor = clamp( coul, 0.0, 1.0 );
+    coul = clamp( coul, 0.0, 1.0 );
+
+    vec4 coulTex = texture( laTextureCoul, AttribsIn.texCoord );
+    if ( iTexCoul > 0 ) {
+        if (length(coulTex.rgb) < 0.5) {
+            discard;
+        }
+    }
+
+    if ( iTexCoul > 0 ) coul *= coulTex;
+
+    FragColor = coul;
 
     // Pour « voir » les normales, on peut remplacer la couleur du fragment par la normale.
     // (Les composantes de la normale variant entre -1 et +1, il faut

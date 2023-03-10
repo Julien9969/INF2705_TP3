@@ -54,6 +54,7 @@ uniform sampler2D laTextureNorm;
 
 in Attribs {
     vec4 couleur;
+    vec2 texCoord;
 } AttribsIn;
 
 out vec4 FragColor;
@@ -67,7 +68,18 @@ void main( void )
     int j = 0;
     // vec4 coul = calculerReflexion( j, L, N, O );
     // ...
-    FragColor = coul; // gris moche!
+
+    // Pour « voir » les textures, on peut remplacer la couleur du fragment par la couleur de la texture.
+    vec4 coulTex = texture( laTextureCoul, AttribsIn.texCoord );
+    if ( iTexCoul > 0 ) {
+        if (length(coulTex.rgb) < 0.5) {
+            discard;
+        }
+    }
+
+    if ( iTexCoul > 0 ) coul *= coulTex;
+
+    FragColor = coul;
 
     // Pour « voir » les normales, on peut remplacer la couleur du fragment par la normale.
     // (Les composantes de la normale variant entre -1 et +1, il faut
