@@ -62,14 +62,8 @@ out vec4 FragColor;
 
 void main( void )
 {
-    // ...
     vec4 coul = AttribsIn.couleur; // la composante ambiante déjà calculée (dans nuanceur de sommets)
 
-    int j = 0;
-    // vec4 coul = calculerReflexion( j, L, N, O );
-    // ...
-
-    // Pour « voir » les textures, on peut remplacer la couleur du fragment par la couleur de la texture.
     vec4 coulTex = texture( laTextureCoul, AttribsIn.texCoord );
     if ( iTexCoul > 0 ) {
         if (length(coulTex.rgb) < 0.5) {

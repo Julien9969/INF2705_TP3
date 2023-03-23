@@ -55,8 +55,8 @@ uniform sampler2D laTextureNorm;
 in Attribs {
     vec4 couleur;
     vec3 lumiDir[3];
-    vec3 normale[3]; 
-    vec3 obsVec[3];
+    vec3 normale; 
+    vec3 obsVec;
     vec2 texCoord;
 } AttribsIn;
 
@@ -93,33 +93,18 @@ vec4 calculerReflexion( in int j, in vec3 L, in vec3 N, in vec3 O ) // pour la l
 void main( void )
 {
     vec4 coul = AttribsIn.couleur;  // la composante ambiante déjà calculée (dans nuanceur de sommets)
-    vec3 N = vec3(0);
 
-
-   //Phong
-   if (typeIllumination == 1) {
-  
-        N = normalize( gl_FrontFacing ? AttribsIn.normale[0] : -AttribsIn.normale[0] );
+    vec3 O = normalize( AttribsIn.obsVec);  // position de l'observateur
+    vec3 N = normalize( gl_FrontFacing ? AttribsIn.normale : -AttribsIn.normale );
 
    
         for (int j = 0; j < 3; j++){
             vec3 L = normalize( AttribsIn.lumiDir[j] ); // vecteur vers la source lumineuse
-            vec3 O = normalize( AttribsIn.obsVec[j] );  // position de l'observateur
-        
-            // calculer la distance de la surface à la source lumineuse
-            float d = length( L );
-            // calculer l'atténuation selon la distance à l'objet
-            attenuation = min ( 1.0, 1.0 / ( LightSource.constantAttenuation +
-                                             LightSource.linearAttenuation * d +
-                                             LightSource.quadraticAttenuation * d * d ) );
-
-            // calculer la réflexion
+           
             coul += calculerReflexion(j, L, N, O );
         }
-   }
 
     coul = clamp( coul, 0.0, 1.0 );
-    // coul = vec4(1);
 
     vec4 coulTex = texture( laTextureCoul, AttribsIn.texCoord );
     if ( iTexCoul > 0 ) {
