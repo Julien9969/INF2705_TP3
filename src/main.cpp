@@ -574,17 +574,23 @@ void FenetreTP::conclure()
 void afficherModele()
 {
     // partie 2: paramètres de texture
-    glActiveTexture( GL_TEXTURE0 ); // l'unité de texture 0
+    glActiveTexture( GL_TEXTURE0 );
     if ( varsUnif.iTexCoul )
         glBindTexture( GL_TEXTURE_2D, texturesCoul[varsUnif.iTexCoul-1] );
     else
         glBindTexture( GL_TEXTURE_2D, 0 );
-    glActiveTexture( GL_TEXTURE1 ); // l'unité de texture 1
+
     if ( varsUnif.iTexNorm )
         glBindTexture( GL_TEXTURE_2D, texturesNorm[varsUnif.iTexNorm-1] );
     else
         glBindTexture( GL_TEXTURE_2D, 0 );
 
+    if (Etat::utiliseTess) {
+        glBindTexture(GL_TEXTURE_2D, heightMapTex);
+    }
+    
+
+    glActiveTexture( GL_TEXTURE1 );
     glBindVertexArray(vao[0]);
 
     if (varsUnif.iTexCoul == 1) {
@@ -609,6 +615,9 @@ void afficherModele()
         if ( Etat::utiliseTess )
         {
             // partie 3a: afficher le terrain avec des GL_PATCHES
+            glPatchParameteri(GL_PATCH_VERTICES, 4);
+            glDrawArrays(GL_PATCHES, 0, 4);
+
 
         }
         else
