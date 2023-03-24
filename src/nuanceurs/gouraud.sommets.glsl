@@ -66,7 +66,27 @@ out Attribs {
 float calculerSpot( in vec3 D, in vec3 L, in vec3 N )
 {
     float spotFacteur = 0.0;
+    if ( dot( D, N ) >= 0 )
+    {
+        float spotDot = dot( L, D );
+        if ( spotDot > cos(radians(LightSource.spotAngleOuverture)) ) 
+        {
+            if (utiliseDirect) 
+            {
+                spotFacteur = smoothstep
+                (
+                pow(cos(radians(LightSource.spotAngleOuverture)),1.01 + LightSource.spotExponent/2), 
+                cos(radians(LightSource.spotAngleOuverture)), 
+                spotDot
+                );
+             }
+        else 
+        {
+            spotFacteur = pow( spotDot, LightSource.spotExponent );
+        }
+    }
     return( spotFacteur );
+    }
 }
 
 float attenuation = 1.0;
@@ -96,14 +116,18 @@ void main( void )
     // appliquer la transformation standard du sommet (P * V * M * sommet)
     gl_Position = matrProj * matrVisu * matrModel * Vertex;
 
+<<<<<<< Updated upstream
 
 
+=======
+>>>>>>> Stashed changes
     // calculer la normale (N) qui sera interpolée pour le nuanceur de fragments
     vec3 N = normalize(matrNormale * Normal);
 
     // calculer la position (P) du sommet (dans le repère de la caméra)
     vec3 pos = vec3( matrVisu * matrModel * Vertex );
 
+<<<<<<< Updated upstream
     // calcul de la composante ambiante du modèle
     vec4 coul = FrontMaterial.emission + FrontMaterial.ambient * LightModel.ambient;
 
@@ -126,5 +150,34 @@ void main( void )
 
         coul += calculerReflexion( j, L, N, O );
     }
+=======
+    vec3 obsVec = (-pos); // = (0- pos);
+    vec3 O = normalize( obsVec );  // position de l'observateur
+    vec4 coul = FrontMaterial.emission + FrontMaterial.ambient * LightModel.ambient;
+    vec3 lumiDir;
+    vec3 L;
+    vec3 D;
+    float d;
+    for (int i = 0; i < 3; i++) {
+    lumiDir = (matrVisu * LightSource.position[i]).xyz - pos;
+        L = normalize( lumiDir ); // vecteur vers la source lumineuse
+        // calculer la distance de la surface à la source lumineuse
+    if (utiliseSpot) {
+    d = length( L );
+        D = normalize( mat3(matrVisu) * -LightSource.spotDirection[i]); // direction du spot
+        // calculer l'atténuation selon la distance à l'objet
+         attenuation = min ( 1.0, 1.0 / ( LightSource.constantAttenuation +
+                                         LightSource.linearAttenuation * d +
+                                         LightSource.quadraticAttenuation * d * d ) );
+                                         coul += calculerReflexion( i, L, N, O ) * calculerSpot( D, L, N );
+    } 
+        else {
+       coul += calculerReflexion( i, L, N, O ) ;
+       }
+        
+    }
+    
+    AttribsOut.texCoord = TexCoord.st + vec2(-1,0) * tempsGlissement;
+>>>>>>> Stashed changes
     AttribsOut.couleur = clamp( coul, 0.0, 1.0 );
 }

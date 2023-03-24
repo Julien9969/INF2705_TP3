@@ -63,8 +63,38 @@ out vec4 FragColor;
 
 float calculerSpot( in vec3 D, in vec3 L, in vec3 N )
 {
+<<<<<<< Updated upstream
     float spotFacteur = 0.0;
     return( spotFacteur );
+=======
+
+	// float c = LightSource.spotExponent;
+	// float cosG = dot(L, D);
+	// float cosD = cos(radians(LightSource.spotAngleOuverture));
+	// float cosI = cosD ;
+	// float cosO = pow(cosI, 1.01 + c / 2);
+	
+
+    float spotFacteur = 1.0;
+
+	float c = LightSource.spotExponent;
+	float cosy = (dot(normalize(L), normalize(D)));
+	float cosInner = cos(radians(LightSource.spotAngleOuverture));
+	float cosOuter = pow(cosInner, 1.01 + c / 2);
+
+    // Un spot n’éclaire qu’à l’intérieur d’un cône, c’est-à-dire a une influence seulement si l’angle γ entre la
+    // direction du spot et la direction vers le point à éclairer est plus petit que l’angle d’ouverture δ du spot.
+    // Lorsque c’est le cas, on a « γ < δ » et mais on vérifiera plutôt si « cos(γ) > cos(δ) » en évaluant des
+    // produits scalaires entre les vecteurs appropriés.
+
+
+    spotFacteur = pow((cosy - cosOuter) / (cosInner - cosOuter), c);
+    spotFacteur = utiliseDirect ? smoothstep(cosOuter, cosInner, cosy) : pow(cosy, c);
+
+    return spotFacteur;  
+
+    // return utiliseDirect ? smoothstep(cosO, cosI, cosG) : cosG > cosD ? pow(cosG, c) : 0;
+>>>>>>> Stashed changes
 }
 
 float attenuation = 1.0;
