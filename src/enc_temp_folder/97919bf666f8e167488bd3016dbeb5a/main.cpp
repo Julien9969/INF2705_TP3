@@ -552,7 +552,6 @@ void FenetreTP::conclure()
 void afficherModele()
 {
     // partie 2: paramètres de texture
-<<<<<<< Updated upstream
     //glActiveTexture( GL_TEXTURE0 ); // l'unité de texture 0
     //if ( varsUnif.iTexCoul )
     //    glBindTexture( GL_TEXTURE_2D, texturesCoul[varsUnif.iTexCoul-1] );
@@ -563,37 +562,6 @@ void afficherModele()
     //    glBindTexture( GL_TEXTURE_2D, texturesNorm[varsUnif.iTexNorm-1] );
     //else
     //    glBindTexture( GL_TEXTURE_2D, 0 );
-=======
-    glActiveTexture( GL_TEXTURE0 ); // l'unité de texture 0
-    if ( varsUnif.iTexCoul )
-        glBindTexture( GL_TEXTURE_2D, texturesCoul[varsUnif.iTexCoul-1] );
-    else
-        glBindTexture( GL_TEXTURE_2D, 0 );
-    
-    glActiveTexture(GL_TEXTURE1);
-    if ( varsUnif.iTexNorm )
-        glBindTexture( GL_TEXTURE_2D, texturesNorm[varsUnif.iTexNorm-1] );
-    else
-        glBindTexture( GL_TEXTURE_2D, 0 );
-
-    if (Etat::utiliseTess) 
-        glBindTexture( GL_TEXTURE_2D, heightMapTex); 
-
-    glActiveTexture(GL_TEXTURE0);
-
-   
-    glBindVertexArray(vao[0]);
-
-    if (varsUnif.iTexCoul == 1) {
-        glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
-        glVertexAttribPointer(locTexCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
-    }
-    else
-    {
-        glBindBuffer(GL_ARRAY_BUFFER, vbo[3]);
-        glVertexAttribPointer(locTexCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
-    }
->>>>>>> Stashed changes
 
     // Dessiner le modèle
     matrModel.PushMatrix(); {
@@ -603,17 +571,11 @@ void afficherModele()
 
         glPatchParameteri( GL_PATCH_VERTICES, 4 );
 
-
         // afficher le terrain
         if ( Etat::utiliseTess )
         {
             // partie 3a: afficher le terrain avec des GL_PATCHES
 
-            glBindTexture(GL_TEXTURE_2D, heightMapTex);
-
-            glBindVertexArray(vao[2]);
-            glDrawArrays(GL_PATCHES, 0, 4);
-            glBindVertexArray(0);
         }
         else
         {
