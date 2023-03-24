@@ -130,6 +130,7 @@ void main( void )
     coul = clamp( coul, 0.0, 1.0 );
 
     vec4 coulTex = texture( laTextureCoul, AttribsIn.texCoord );
+    vec4 coulRel = texture( laTextureNorm, AttribsIn.texCoord);
     if ( iTexCoul > 0 ) {
         if (length(coulTex.rgb) < 0.5) {
             discard;
@@ -137,6 +138,7 @@ void main( void )
     }
 
     if ( iTexCoul > 0 ) coul *= coulTex;
+    if ( iTexNorm > 0 ) coul *= coulRel;
 
     FragColor = coul;
 

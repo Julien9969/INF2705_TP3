@@ -581,7 +581,7 @@ void afficherModele()
         glBindTexture( GL_TEXTURE_2D, 0 );
     
     glActiveTexture(GL_TEXTURE1); // l'unité de texture 1
-    if (varsUnif.iTexNorm) {
+    if (varsUnif.iTexNorm > 0) {
         glBindTexture(GL_TEXTURE_2D, texturesNorm[varsUnif.iTexNorm - 1]);
     }
     else
