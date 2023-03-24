@@ -74,20 +74,12 @@ void main( void )
     AttribsOut.normale = matrNormale * Normal;
     vec3 pos = ( matrVisu * matrModel * Vertex ).xyz;
     AttribsOut.obsVec = (-pos);
-    // calcul de la composante ambiante du modèle
-    vec4 coul = vec4(0.0,0.0,0.0,1.0);
 
     AttribsOut.texCoord = TexCoord.st + vec2(-1,0) * tempsGlissement;
     
     for (int j = 0; j < 3; j++){
 
-        // calculer la normale (N)
-
         // calculer le vecteur de la direction (L) de la lumière (dans le repère de la caméra)
         AttribsOut.lumiDir[j] = ( matrVisu * LightSource.position[j] ).xyz - pos;
-
-        // calculer le vecteur observateur (O)
-        // =(0-pos) un vecteur qui pointe vers le (0,0,0), c'est-à-dire vers la caméra
-
     }
 }

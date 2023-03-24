@@ -49,6 +49,7 @@ layout (std140) uniform varsUnif
 
 uniform sampler2D laTextureCoul;
 uniform sampler2D laTextureNorm;
+uniform mat4 matrVisu;
 
 /////////////////////////////////////////////////////////////////
 
@@ -64,8 +65,20 @@ out vec4 FragColor;
 
 float calculerSpot( in vec3 D, in vec3 L, in vec3 N )
 {
-    float spotFacteur = 0.0;
-    return( spotFacteur );
+	float spotFacteur = 1.0;
+
+	float c = LightSource.spotExponent;
+	float cosy = dot(L, D);
+	float cosInner = cos(radians(LightSource.spotAngleOuverture));
+	float cosOuter = pow(cosInner, 1.01 + c / 2);
+	
+
+    // Un spot n’éclaire qu’à l’intérieur d’un cône, c’est-à-dire a une influence seulement si l’angle γ entre la
+    // direction du spot et la direction vers le point à éclairer est plus petit que l’angle d’ouverture δ du spot.
+    // Lorsque c’est le cas, on a « γ < δ » et mais on vérifiera plutôt si « cos(γ) > cos(δ) » en évaluant des
+    // produits scalaires entre les vecteurs appropriés.
+
+	return utiliseDirect ? smoothstep(cosOuter, cosInner, cosy) : pow(cosy, c);
 }
 
 float attenuation = 1.0;
@@ -100,8 +113,13 @@ void main( void )
    
         for (int j = 0; j < 3; j++){
             vec3 L = normalize( AttribsIn.lumiDir[j] ); // vecteur vers la source lumineuse
-           
-            coul += calculerReflexion(j, L, N, O );
+            vec3 D = transpose(inverse(mat3(matrVisu))) * -LightSource.spotDirection[j]; // direction du spot
+
+            if (utiliseSpot) {
+                coul += calculerReflexion(j, L, N, O ) * calculerSpot( D, L, N );
+            } else {
+                coul += calculerReflexion(j, L, N, O );
+            }
         }
 
     coul = clamp( coul, 0.0, 1.0 );

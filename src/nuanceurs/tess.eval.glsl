@@ -4,23 +4,15 @@ uniform mat4 matrModel;
 uniform mat4 matrVisu;
 uniform mat4 matrProj;
 uniform mat3 matrNormale;
+uniform sampler2D heightMapTex;
 
 /////////////////////////////////////////////////////////////////
 
 in Attribs {
-	vec4 vertex;
-	vec4 couleur;
-	vec3 normale;
 	vec2 texCoord;
 } AttribsIn[];
 
-out Attribs {
-	vec4 vertex;
-	vec4 couleur;
-	vec3 normale;
-	vec2 texCoord;
-} AttribsOut;
-
+out float heigt;
 
 layout(quads) in;
 
@@ -54,23 +46,13 @@ vec4 interpole( vec4 v0, vec4 v1, vec4 v2, vec4 v3 )
 
 void main( void )
 {
-	// transformation standard du sommet
-	gl_Position = interpole( gl_in[0].gl_Position, gl_in[1].gl_Position, gl_in[3].gl_Position, gl_in[2].gl_Position );
-	// gl_Position.z = 1.0 - length( gl_Position.xy );
-	// gl_Position.xyz = normalize( gl_Position.xyz );
+
+	vec2 texCoordI = interpole( AttribsIn[0].texCoord, AttribsIn[1].texCoord, AttribsIn[3].texCoord, AttribsIn[2].texCoord );
+	heigt = texture(heightMapTex, texCoordI).y * 5;
+ 
+	vec4 pos = interpole( gl_in[0].gl_Position, gl_in[1].gl_Position, gl_in[3].gl_Position, gl_in[2].gl_Position );
 	
-	// calculer la normale
-	vec3 N = interpole( AttribsIn[0].normale, AttribsIn[1].normale, AttribsIn[3].normale, AttribsIn[2].normale );
-	AttribsOut.normale = N;
+	pos += vec4(0.0, 1.0, 0.0, 0.0) * heigt;
 
-	// calculer la position du sommet dans le rep�re de la cam�ra
-	vec3 pos = ( matrVisu * matrModel * interpole( AttribsIn[0].vertex, AttribsIn[1].vertex, AttribsIn[3].vertex, AttribsIn[2].vertex )).xyz;
-
-	AttribsOut.couleur = interpole( AttribsIn[0].couleur, AttribsIn[1].couleur, AttribsIn[3].couleur, AttribsIn[2].couleur );
-
-    vec4 coul = vec4(1); 
-
-
-	AttribsOut.texCoord = interpole( AttribsIn[0].texCoord, AttribsIn[1].texCoord, AttribsIn[3].texCoord, AttribsIn[2].texCoord );
-	AttribsOut.couleur = clamp(coul, 0.0, 1.0);
+	gl_Position = matrProj * matrVisu * matrModel * pos;
 }
