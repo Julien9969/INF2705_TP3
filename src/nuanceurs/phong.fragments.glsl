@@ -79,8 +79,8 @@ float calculerSpot( in vec3 D, in vec3 L, in vec3 N )
     // produits scalaires entre les vecteurs appropriés.
 
 
-    // spotFacteur = pow((cosy - cosOuter) / (cosInner - cosOuter), c);
-    spotFacteur = utiliseDirect ? smoothstep(cosOuter, cosInner, cosy) : pow(cosy, c);
+    spotFacteur = pow((cosy - cosOuter) / (cosInner - cosOuter), c);
+    // spotFacteur = utiliseDirect ? smoothstep(cosOuter, cosInner, cosy) : pow(cosy, c);
     return spotFacteur;
 }
 

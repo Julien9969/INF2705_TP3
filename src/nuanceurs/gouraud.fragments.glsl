@@ -65,6 +65,7 @@ void main( void )
     vec4 coul = AttribsIn.couleur; // la composante ambiante déjà calculée (dans nuanceur de sommets)
 
     vec4 coulTex = texture( laTextureCoul, AttribsIn.texCoord );
+    coulTex += texture(laTextureNorm, AttribsIn.texCoord);
     if ( iTexCoul > 0 ) {
         if (length(coulTex.rgb) < 0.5) {
             discard;
