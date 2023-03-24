@@ -3,13 +3,15 @@
 
 /////////////////////////////////////////////////////////////////
 
-in float heigt;
+in Attribs {
+	vec2 texCoord;
+	float heigt;
+} AttribsIn;
 
-uniform sampler2D heightMapTex;
 
 out vec4 FragColor;
 
 void main( void )
 {
-    FragColor = vec4(1 / (heigt / 5));
+    FragColor = vec4(1 * AttribsIn.heigt/5, 1 * AttribsIn.heigt/5, 1 * AttribsIn.heigt/5, 1.0);
 }

@@ -580,11 +580,17 @@ void afficherModele()
     else
         glBindTexture( GL_TEXTURE_2D, 0 );
     
-    glActiveTexture( GL_TEXTURE1 ); // l'unité de texture 1
-    if ( varsUnif.iTexNorm )
-        glBindTexture( GL_TEXTURE_2D, texturesNorm[varsUnif.iTexNorm-1] );
+    glActiveTexture(GL_TEXTURE1); // l'unité de texture 1
+    if (varsUnif.iTexNorm) {
+        glBindTexture(GL_TEXTURE_2D, texturesNorm[varsUnif.iTexNorm - 1]);
+    }
     else
         glBindTexture( GL_TEXTURE_2D, 0 );
+
+    glActiveTexture(GL_TEXTURE0); // l'unité de texture 1
+    if (Etat::utiliseTess) {
+        glBindTexture(GL_TEXTURE_2D, heightMapTex);
+    }
 
     glBindVertexArray(vao[0]);
 
@@ -609,11 +615,13 @@ void afficherModele()
         // afficher le terrain
         if ( Etat::utiliseTess )
         {
+            //glActiveTexture(GL_TEXTURE3); // l'unité de texture 1
+
             glBindTexture(GL_TEXTURE_2D, heightMapTex);
 
             glBindVertexArray(vao[2]);
             glDrawArrays(GL_PATCHES, 0, 4);
-            glBindVertexArray(0);
+            //glBindVertexArray(0);
 
         }
         else

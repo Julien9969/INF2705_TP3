@@ -68,7 +68,7 @@ float calculerSpot( in vec3 D, in vec3 L, in vec3 N )
 	float spotFacteur = 1.0;
 
 	float c = LightSource.spotExponent;
-	float cosy = (dot(normalize(L), normalize(D)));
+	float cosy = dot(L, D);
 	float cosInner = cos(radians(LightSource.spotAngleOuverture));
 	float cosOuter = pow(cosInner, 1.01 + c / 2);
 	
@@ -78,10 +78,7 @@ float calculerSpot( in vec3 D, in vec3 L, in vec3 N )
     // Lorsque c’est le cas, on a « γ < δ » et mais on vérifiera plutôt si « cos(γ) > cos(δ) » en évaluant des
     // produits scalaires entre les vecteurs appropriés.
 
-
-    // spotFacteur = pow((cosy - cosOuter) / (cosInner - cosOuter), c);
-    spotFacteur = utiliseDirect ? smoothstep(cosOuter, cosInner, cosy) : pow(cosy, c);
-    return spotFacteur;
+	return utiliseDirect ? smoothstep(cosOuter, cosInner, cosy) : pow(cosy, c);
 }
 
 float attenuation = 1.0;
@@ -116,12 +113,10 @@ void main( void )
    
         for (int j = 0; j < 3; j++){
             vec3 L = normalize( AttribsIn.lumiDir[j] ); // vecteur vers la source lumineuse
-            vec3 D = mat3(matrVisu) * -LightSource.spotDirection[j]; // direction du spot
+            vec3 D = transpose(inverse(mat3(matrVisu))) * -LightSource.spotDirection[j]; // direction du spot
 
             if (utiliseSpot) {
-                // coul += calculerReflexion(j, L, N, O ) * calculerSpot( D, L, N );
                 coul += calculerReflexion(j, L, N, O ) * calculerSpot( D, L, N );
-                // coul += calculerReflexion(j, L, N, O ) * calculerSpot( D, L, N );
             } else {
                 coul += calculerReflexion(j, L, N, O );
             }

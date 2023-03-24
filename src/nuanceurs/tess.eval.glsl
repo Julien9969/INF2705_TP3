@@ -12,7 +12,10 @@ in Attribs {
 	vec2 texCoord;
 } AttribsIn[];
 
-out float heigt;
+out Attribs {
+	vec2 texCoord;
+	float heigt;
+} AttribsOut;
 
 layout(quads) in;
 
@@ -48,11 +51,13 @@ void main( void )
 {
 
 	vec2 texCoordI = interpole( AttribsIn[0].texCoord, AttribsIn[1].texCoord, AttribsIn[3].texCoord, AttribsIn[2].texCoord );
-	heigt = texture(heightMapTex, texCoordI).y * 5;
+	float heigtTex = texture(heightMapTex, texCoordI).y * 5;
  
 	vec4 pos = interpole( gl_in[0].gl_Position, gl_in[1].gl_Position, gl_in[3].gl_Position, gl_in[2].gl_Position );
 	
-	pos += vec4(0.0, 1.0, 0.0, 0.0) * heigt;
+	pos += vec4(0.0, 1.0, 0.0, 0.0) * heigtTex;
 
 	gl_Position = matrProj * matrVisu * matrModel * pos;
+	AttribsOut.texCoord = texCoordI;
+	AttribsOut.heigt = heigtTex;
 }
