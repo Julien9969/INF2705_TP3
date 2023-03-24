@@ -119,9 +119,7 @@ void main( void )
             vec3 D = mat3(matrVisu) * -LightSource.spotDirection[j]; // direction du spot
 
             if (utiliseSpot) {
-                // coul += calculerReflexion(j, L, N, O ) * calculerSpot( D, L, N );
                 coul += calculerReflexion(j, L, N, O ) * calculerSpot( D, L, N );
-                // coul += calculerReflexion(j, L, N, O ) * calculerSpot( D, L, N );
             } else {
                 coul += calculerReflexion(j, L, N, O );
             }
@@ -138,7 +136,7 @@ void main( void )
     }
 
     if ( iTexCoul > 0 ) coul *= coulTex;
-    if ( iTexNorm > 0 ) coul *= coulRel;
+    if ( iTexNorm > 0 ) coul *= coulRel * 2.0 - 1.0;
 
     FragColor = coul;
 
