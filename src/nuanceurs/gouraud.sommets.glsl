@@ -64,10 +64,20 @@ out Attribs {
 } AttribsOut;
 
 
-float calculerSpot( in vec3 D, in vec3 L, in vec3 N )
-{
-    float spotFacteur = 0.0;
-    return( spotFacteur );
+float calculerSpot(in vec3 D, in vec3 L) {
+    float cosy = dot(L, D);
+    float cosInner = cos(radians(LightSource.spotAngleOuverture));
+    float cosOuter = pow(cosInner, 1.01 + LightSource.spotExponent / 2);
+    float spotFacteur = 1.0;
+
+    if (utiliseDirect) { 
+        // Direct3D
+        spotFacteur = smoothstep(cosOuter, cosInner, cosy);
+    } else { 
+        // OpenGL
+        spotFacteur = (cosy > cosInner) ? pow(cosy, LightSource.spotExponent) : 0.0;
+    }
+    return spotFacteur;
 }
 
 float attenuation = 1.0;
@@ -109,8 +119,14 @@ void main( void )
 
         vec3 lumiDir = ( matrVisu * LightSource.position[j] ).xyz - pos;
         vec3 L = normalize( lumiDir );  // direction de la lumière
+        vec3 D = normalize(mat3(matrVisu) * -LightSource.spotDirection[j]); // direction du spot
 
-        coul += calculerReflexion( j, L, N, O );
+
+        if (utiliseSpot) {
+            coul += calculerReflexion(j, L, N, O ) * calculerSpot( D, L );
+        } else {
+            coul += calculerReflexion(j, L, N, O );
+        }
     }
     AttribsOut.texCoord = TexCoord.st + vec2(-1,0) * tempsGlissement;
     AttribsOut.couleur = clamp( coul, 0.0, 1.0 );

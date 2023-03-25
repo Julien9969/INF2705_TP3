@@ -63,24 +63,20 @@ in Attribs {
 
 out vec4 FragColor;
 
-float calculerSpot( in vec3 D, in vec3 L, in vec3 N )
-{
-	float spotFacteur = 1.0;
 
-	float c = LightSource.spotExponent;
-	float cosy = (dot(normalize(L), normalize(D)));
-	float cosInner = cos(radians(LightSource.spotAngleOuverture));
-	float cosOuter = pow(cosInner, 1.01 + c / 2);
-	
+float calculerSpot(in vec3 D, in vec3 L) {
+    float cosy = dot(L, D);
+    float cosInner = cos(radians(LightSource.spotAngleOuverture));
+    float cosOuter = pow(cosInner, 1.01 + LightSource.spotExponent / 2);
+    float spotFacteur = 1.0;
 
-    // Un spot n’éclaire qu’à l’intérieur d’un cône, c’est-à-dire a une influence seulement si l’angle γ entre la
-    // direction du spot et la direction vers le point à éclairer est plus petit que l’angle d’ouverture δ du spot.
-    // Lorsque c’est le cas, on a « γ < δ » et mais on vérifiera plutôt si « cos(γ) > cos(δ) » en évaluant des
-    // produits scalaires entre les vecteurs appropriés.
-
-
-    spotFacteur = pow((cosy - cosOuter) / (cosInner - cosOuter), c);
-    // spotFacteur = utiliseDirect ? smoothstep(cosOuter, cosInner, cosy) : pow(cosy, c);
+    if (utiliseDirect) { 
+        // Direct3D
+        spotFacteur = smoothstep(cosOuter, cosInner, cosy);
+    } else { 
+        // OpenGL
+        spotFacteur = (cosy > cosInner) ? pow(cosy, LightSource.spotExponent) : 0.0;
+    }
     return spotFacteur;
 }
 
@@ -116,10 +112,10 @@ void main( void )
    
         for (int j = 0; j < 3; j++){
             vec3 L = normalize( AttribsIn.lumiDir[j] ); // vecteur vers la source lumineuse
-            vec3 D = mat3(matrVisu) * -LightSource.spotDirection[j]; // direction du spot
+            vec3 D = normalize(mat3(matrVisu) * -LightSource.spotDirection[j]); // direction du spot
 
             if (utiliseSpot) {
-                coul += calculerReflexion(j, L, N, O ) * calculerSpot( D, L, N );
+                coul += calculerReflexion(j, L, N, O ) * calculerSpot( D, L );
             } else {
                 coul += calculerReflexion(j, L, N, O );
             }
@@ -129,6 +125,7 @@ void main( void )
 
     vec4 coulTex = texture( laTextureCoul, AttribsIn.texCoord );
     vec4 coulRel = texture( laTextureNorm, AttribsIn.texCoord);
+    
     if ( iTexCoul > 0 ) {
         if (length(coulTex.rgb) < 0.5) {
             discard;
@@ -136,12 +133,7 @@ void main( void )
     }
 
     if ( iTexCoul > 0 ) coul *= coulTex;
-    if ( iTexNorm > 0 ) coul *= coulRel * 2.0 - 1.0;
+    if ( iTexNorm > 0 ) coul *= coulRel;
 
     FragColor = coul;
-
-    // Pour « voir » les normales, on peut remplacer la couleur du fragment par la normale.
-    // (Les composantes de la normale variant entre -1 et +1, il faut
-    // toutefois les convertir en une couleur entre 0 et +1 en faisant (N+1)/2.)
-    // if ( afficheNormales ) FragColor = clamp( vec4( (N+1)/2, AttribsIn.couleur.a ), 0.0, 1.0 );
 }
