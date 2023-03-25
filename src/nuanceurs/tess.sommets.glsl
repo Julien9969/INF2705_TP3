@@ -25,5 +25,4 @@ void main( void )
     AttribsOut.texCoord = TexCoord.st;
 
     gl_Position = Vertex;
-    // gl_Position = matrProj * matrVisu * matrModel * Vertex;
 }

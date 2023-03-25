@@ -1,4 +1,3 @@
-// NUANCEUR DE CONTROLE DE TESS
 #version 410
 
 layout(vertices = 4) out;

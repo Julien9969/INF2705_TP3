@@ -625,7 +625,8 @@ void afficherModele()
 
         }
         else
-        {
+        {   
+            glUniformMatrix3fv(locmatrNormale, 1, GL_TRUE, glm::value_ptr(glm::inverse(glm::mat3(matrVisu.getMatr() * matrModel.getMatr()))));
             switch ( Etat::modele )
             {
             default:
